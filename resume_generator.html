@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📋 履历修改器</title>
+    <style>
+        * {
+            color: #ffffff;
+            background-color: transparent;
+            font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+        }
+        
+        body {
+            background-color: #282830;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* 主布局 - 左右分栏 */
+        .main-layout {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        /* 左栏：控制面板 */
+        .left-panel {
+            flex: 1;
+            min-width: 300px;
+            max-width: 400px;
+        }
+        
+        /* 右栏：输出和统计 */
+        .right-panel {
+            flex: 2;
+            min-width: 500px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 30px;
+        }
+        
+        .resume-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .category-group {
+            background-color: #282830;
+            border: 2px solid #555;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .category-group h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .buttons-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            border: 2px solid;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:active {
+            opacity: 0.8;
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        
+        .btn-primary {
+            background-color: #00ff00;
+            color: #000000;
+            border-color: #00ff00;
+        }
+        
+        .btn-reset {
+            background-color: #ff0000;
+            color: #ffffff;
+            border-color: #ff0000;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .global-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 15px;
+            border: 2px solid #555;
+            border-radius: 8px;
+        }
+        
+        .stats-display {
+            padding: 15px;
+            border: 2px solid #555;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #282830;
+        }
+        
+        .stats-display div {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 900px) {
+            .main-layout {
+                flex-direction: column;
+            }
+            
+            .left-panel,
+            .right-panel {
+                max-width: 100%;
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 履历修改器</h1>
+        
+        <div class="main-layout">
+            <!-- 左栏：履历生成控制面板 -->
+            <div class="left-panel">
+                <div class="resume-container">
+                    <!-- 国际赛分类 -->
+                    <div class="category-group">
+                        <h2>国际赛</h2>
+                        <div class="buttons-layout">
+                            <button class="btn-primary" onclick="addNormalResume('国际赛')">普通履历 +1</button>
+                            <button class="btn-primary" onclick="addExcellentResume('国际赛')">佳辩履历 +1</button>
+                            <button class="btn-primary" onclick="addFullResume('国际赛')">全程履历 +1</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 无限制级分类 -->
+                    <div class="category-group">
+                        <h2>无限制级</h2>
+                        <div class="buttons-layout">
+                            <button class="btn-primary" onclick="addNormalResume('无限制级')">普通履历 +1</button>
+                            <button class="btn-primary" onclick="addExcellentResume('无限制级')">佳辩履历 +1</button>
+                            <button class="btn-primary" onclick="addFullResume('无限制级')">全程履历 +1</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 限制级分类 -->
+                    <div class="category-group">
+                        <h2>限制级</h2>
+                        <div class="buttons-layout">
+                            <button class="btn-primary" onclick="addNormalResume('限制级')">普通履历 +1</button>
+                            <button class="btn-primary" onclick="addExcellentResume('限制级')">佳辩履历 +1</button>
+                            <button class="btn-primary" onclick="addFullResume('限制级')">全程履历 +1</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 全局控制 -->
+                <div class="global-controls">
+                    <button class="btn-reset" onclick="clearAllResume()">清空所有履历</button>
+                </div>
+                
+                <!-- 统计显示 -->
+                <div class="stats-display" id="statsDisplay">
+                    <div>当前履历：0+0+0</div>
+                    <div></div>
+                    <div>分类统计：</div>
+                    <div>国际赛：普通0 / 佳辩0 / 全程0</div>
+                    <div>无限制级：普通0 / 佳辩0 / 全程0</div>
+                    <div>限制级：普通0 / 佳辩0 / 全程0</div>
+                </div>
+            </div>
+            
+            <!-- 右栏：履历输出 -->
+            <div class="right-panel">
+                <!-- 履历生成输出框 -->
+                <div class="resume-generator">
+                    <h2>履历生成</h2>
+                    <div class="output-container">
+                        <div class="output-section">
+                            <h3>生成的履历</h3>
+                            <textarea id="resumeOutput" readonly placeholder="生成的履历将显示在这里..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        .resume-generator {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+        
+        .resume-generator h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .generator-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .output-container {
+            margin-top: 10px;
+        }
+        
+        .output-section {
+            width: 100%;
+        }
+        
+        .output-section h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        #resumeOutput {
+            width: 100%;
+            min-height: 300px;
+            padding: 12px;
+            border: 2px solid #555;
+            border-radius: 6px;
+            background-color: #333;
+            color: #fff;
+            font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+            font-size: 13px;
+            resize: vertical;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+            line-height: 1.4;
+        }
+    </style>
+    
+    <script>
+        // 履历数据
+        let resumeData = {
+            '国际赛': {'a': 0, 'b': 0, 'c': 0},
+            '无限制级': {'a': 0, 'b': 0, 'c': 0},
+            '限制级': {'a': 0, 'b': 0, 'c': 0}
+        };
+        
+        // 增加普通履历
+        function addNormalResume(category) {
+            if (resumeData[category]) {
+                resumeData[category]['a'] += 1;
+                updateResumeStats();
+                generateResume(category, 'a'); // 生成普通履历
+            }
+        }
+        
+        // 增加佳辩履历
+        function addExcellentResume(category) {
+            if (resumeData[category]) {
+                resumeData[category]['a'] += 1;
+                resumeData[category]['b'] += 1;
+                updateResumeStats();
+                generateResume(category, 'b'); // 生成佳辩履历
+            }
+        }
+        
+        // 增加全程履历
+        function addFullResume(category) {
+            if (resumeData[category]) {
+                resumeData[category]['a'] += 1;
+                resumeData[category]['b'] += 1;
+                resumeData[category]['c'] += 1;
+                updateResumeStats();
+                generateResume(category, 'c'); // 生成全程履历
+            }
+        }
+        
+        // 清空所有履历
+        function clearAllResume() {
+            for (let category in resumeData) {
+                resumeData[category] = {'a': 0, 'b': 0, 'c': 0};
+            }
+            generatedResumes = {
+                '无限制级': [],
+                '限制级': [],
+                '国际赛': []
+            };
+            mode2UsedYears = {};
+            newFruitUsedTypes = []; // 清空新果辩已使用类型记录
+            updateResumeStats();
+            updateOutput();
+        }
+        
+        // 更新履历统计显示
+        function updateResumeStats() {
+            let totalA = 0;
+            let totalB = 0;
+            let totalC = 0;
+            
+            for (let category in resumeData) {
+                totalA += resumeData[category]['a'];
+                totalB += resumeData[category]['b'];
+                totalC += resumeData[category]['c'];
+            }
+            
+            let statsText = `
+                <div>当前履历：${totalA}+${totalB}+${totalC}</div>
+                <div></div>
+                <div>分类统计：</div>
+            `;
+            
+            for (let category in resumeData) {
+                let a = resumeData[category]['a'];
+                let b = resumeData[category]['b'];
+                let c = resumeData[category]['c'];
+                statsText += `<div>${category}：普通${a} / 佳辩${b} / 全程${c}</div>`;
+            }
+            
+            document.getElementById('statsDisplay').innerHTML = statsText;
+        }
+        
+        // 履历生成功能
+        
+        // 从名字.md文件解析的名字列表
+        const nameList = ['翰墨', '丹青', '弦歌', '清晏', '观澜', '漱玉', '枕书', '听松', '临帖', '裁云', '酌月', '吟风', '砺行', '笃志', '鸿渐', '奋楫', '骋怀', '拓荒', '鼎新', '竞帆', '扬舲', '振翮', '锐进', '精进', '格物', '致知', '启智', '探微', '拓新', '澄心', '观道', '秉烛', '瞻星', '撷英', '荟菁', '集萃', '藏锋', '揽星河', '书华章', '咏而归', '枕星河', '听竹语', '踏歌行', '步青云', '采秋实', '撷春华', '漱清流', '破长风', '击长空', '凌绝顶', '竞风流', '拓新程', '展宏图', '搏今朝', '攀高峰', '立潮头', '逐天光', '启鸿蒙', '探骊珠', '索真义', '融文理', '汇群英', '集众智', '启新章', '续薪火', '育英才', '培新秀', '启童蒙', '怀瑾握瑜', '兰芷之室', '芝兰玉树', '高山流水', '阳春白雪', '曲水流觞', '茂林修竹', '惠风和畅', '天朗气清', '鸢飞鱼跃', '松风水月', '冰壶秋月', '光风霁月', '乘风破浪', '披荆斩棘', '笃行致远', '知行合一', '自强不息', '厚德载物', '发愤图强', '锲而不舍', '金石可镂', '勇攀高峰', '一往无前', '鹏程万里', '志存高远', '格物致知', '穷理尽性', '探赜索隐', '薪火相传', '继往开来', '推陈出新', '开拓创新', '锐意进取', '精益求精', '求真务实', '融会贯通', '集思广益', '厚积薄发', '群英荟萃', '人才济济', '济济一堂', '百花齐放', '百家争鸣', '万紫千红', '风华正茂', '挥斥方遒', '激扬文字', '挥毫泼墨', '笔走龙蛇'];
+        
+        // 中文数字转换表
+        const chineseNumbers = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+        
+        // 将数字转换为中文数字
+        function toChineseNumber(num) {
+            if (num >= 1 && num <= 9) {
+                return chineseNumbers[num];
+            }
+            return num.toString();
+        }
+        
+        // 已使用的名字记录
+        let usedNames = {};
+        // 生成的履历记录，按分类存储
+        let generatedResumes = {
+            '无限制级': [],
+            '限制级': [],
+            '国际赛': []
+        };
+        
+        // 国际赛模式2已使用年份记录
+        let mode2UsedYears = {};
+        
+        // 新果辩已使用的卡赛类型记录
+        let newFruitUsedTypes = [];
+        const newFruitTypes = ['黑卡赛', '金卡赛', '银卡赛', '铜卡赛', '铁卡赛'];
+        
+        // 国际赛数据池
+        const internationalCities = ['北京', '上海', '广州', '深圳', '杭州', '成都', '重庆', '南京', '武汉', '西安', '天津', '苏州', '长沙', '郑州', '青岛', '厦门', '宁波', '合肥', '福州', '昆明'];
+        const internationalTournamentNames = ['黄连', '新果辩', '世锦筛', '华语辩坛老友筛', '全辩赛', '法辩赛', '星辩筛', '临潮辩', '捭阖辩', '华辩赛'];
+        const internationalRanks = ['冠军', '亚军', '季军'];
+        const internationalRankWeights = [0.4, 0.3, 0.3]; // 冠军40%, 亚军30%, 季军30%
+        const internationalHonors = ['全程最佳辩手', '最佳辩手', ''];
+        const internationalHonorWeights = [0.3, 0.2, 0.5]; // 全程最佳30%, 最佳20%, 无50%
+        
+        // 生成年份：当前年份减去0-3的随机数，权重越高生成越小的偏移值
+        function generateYear() {
+            const currentYear = new Date().getFullYear();
+            // 权重：0 > 1 > 2 > 3
+            const weightedOffsets = [0, 0, 0, 0, 1, 1, 1, 2, 2, 3];
+            const randomIndex = Math.floor(Math.random() * weightedOffsets.length);
+            const randomOffset = weightedOffsets[randomIndex];
+            return currentYear - randomOffset;
+        }
+        
+        // 生成届数：带权重的1-9随机数
+        function generateSession() {
+            // 权重：数字越小权重越高
+            const weightedNumbers = [1, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 5, 6, 7, 8, 9];
+            const randomIndex = Math.floor(Math.random() * weightedNumbers.length);
+            return weightedNumbers[randomIndex];
+        }
+        
+        // 生成杯赛名称：从名字列表中随机选择，避免重复
+        function generateCupName() {
+            // 检查是否有未使用的名字
+            const availableNames = nameList.filter(name => !usedNames[name]);
+            
+            let name, session;
+            
+            if (availableNames.length > 0) {
+                // 选择未使用的名字
+                const randomIndex = Math.floor(Math.random() * availableNames.length);
+                name = availableNames[randomIndex];
+                // 标记为已使用
+                usedNames[name] = true;
+                session = generateSession();
+            } else {
+                // 所有名字都已使用，增加届数
+                const randomIndex = Math.floor(Math.random() * nameList.length);
+                name = nameList[randomIndex];
+                // 增加届数
+                const currentSession = usedNames[name] || 1;
+                session = currentSession + 1;
+                usedNames[name] = session;
+            }
+            
+            return { name, session };
+        }
+        
+        // 生成队伍数量：带权重的8或12的倍数
+        function generateTeamCount() {
+            // 权重：8的倍数 > 12的倍数；16和32 > 其他8的倍数（增加8x权重，减少12x权重）
+            const weightedNumbers = [8, 8, 8, 8, 16, 16, 16, 16, 16, 16, 32, 32, 32, 32, 32, 32, 24, 24, 40, 40, 48, 48, 12];
+            const randomIndex = Math.floor(Math.random() * weightedNumbers.length);
+            return weightedNumbers[randomIndex];
+        }
+        
+        // 生成比赛结果：根据队伍数量
+        function generateResult(teamCount) {
+            const quarterFinal = Math.ceil(teamCount / 8); // 八分之一以上
+            
+            // 可能的结果列表，根据队伍数量确定
+            let possibleResults = [];
+            
+            if (quarterFinal <= 1) {
+                possibleResults = ['冠军', '亚军'];
+            } else if (quarterFinal <= 2) {
+                possibleResults = ['冠军', '亚军', '季军', `${quarterFinal}强`];
+            } else {
+                possibleResults = ['冠军', '亚军', '季军', `${quarterFinal}强`];
+            }
+            
+            // 结果权重：冠军 > 亚军 > 季军 > x强
+            const weightedResults = [];
+            possibleResults.forEach((result, index) => {
+                const weight = possibleResults.length - index;
+                for (let i = 0; i < weight; i++) {
+                    weightedResults.push(result);
+                }
+            });
+            
+            const randomIndex = Math.floor(Math.random() * weightedResults.length);
+            return weightedResults[randomIndex];
+        }
+        
+        // 生成特殊荣誉：根据履历类型
+        function generateHonor(resumeType) {
+            // 根据指定的履历类型决定荣誉
+            if (resumeType === 'c') {
+                // 全程履历，高概率生成全程最佳辩手
+                const honorOptions = ['+全程最佳辩手', '+全程最佳辩手', '+全程最佳辩手', '+全程最佳辩手', ''];
+                const randomIndex = Math.floor(Math.random() * honorOptions.length);
+                return honorOptions[randomIndex];
+            } else if (resumeType === 'b') {
+                // 佳辩履历，中等概率生成最佳辩手
+                const honorOptions = ['+最佳辩手', '+最佳辩手', '+最佳辩手', ''];
+                const randomIndex = Math.floor(Math.random() * honorOptions.length);
+                return honorOptions[randomIndex];
+            } else {
+                // 普通履历，基本不生成荣誉
+                return '';
+            }
+        }
+        
+        // 计算某类型履历的总数
+        function sumResumeType(type) {
+            let total = 0;
+            for (let category in resumeData) {
+                total += resumeData[category][type];
+            }
+            return total;
+        }
+        
+        // 生成普通履历（非国际赛）
+        function generateNormalResume(resumeType) {
+            const year = generateYear();
+            const { name: cupName, session } = generateCupName();
+            const teamCount = generateTeamCount();
+            const result = generateResult(teamCount);
+            const honor = generateHonor(resumeType);
+            
+            // 构建结果字符串
+            const resume = `${year}第${toChineseNumber(session)}届${cupName}杯(${teamCount}队)${result}${honor}`;
+            
+            return { 
+                text: resume,
+                year: year,
+                hasFull: honor.includes('全程'),
+                hasExcellent: honor.includes('最佳辩手') && !honor.includes('全程'),
+                rank: result,
+                mode: 'normal'
+            };
+        }
+        
+        // 生成国际赛履历
+        function generateInternationalResume(resumeType) {
+            const year = generateYear();
+            const tournamentName = internationalTournamentNames[Math.floor(Math.random() * internationalTournamentNames.length)];
+            
+            // 生成荣誉
+            const honor = weightedRandom(internationalHonors, internationalHonorWeights);
+            // 生成名次
+            const rank = weightedRandom(internationalRanks, internationalRankWeights);
+            
+            let resumeText = '';
+            let mode = 1; // 默认为模式1
+            
+            // 新果辩特殊处理：使用黑金银铜铁卡赛，每个只能生成一次
+            if (tournamentName === '新果辩') {
+                // 获取未使用的卡赛类型
+                const availableTypes = newFruitTypes.filter(type => !newFruitUsedTypes.includes(type));
+                
+                if (availableTypes.length > 0) {
+                    // 随机选择一个未使用的卡赛类型
+                    const selectedType = availableTypes[Math.floor(Math.random() * availableTypes.length)];
+                    // 记录为已使用
+                    newFruitUsedTypes.push(selectedType);
+                    // 生成履历文本
+                    resumeText = `${year}年新果辩${selectedType}${rank}`;
+                } else {
+                    // 如果所有类型都已使用，回退到普通模式
+                    resumeText = `${year}年新果辩${rank}`;
+                }
+            } else {
+                // 其他国际赛正常处理
+                // 模式选择：70%模式1，30%模式2
+                mode = Math.random() < 0.7 ? 1 : 2;
+                
+                // 模式2检查：如果年份已使用，切换到模式1
+                if (mode === 2 && mode2UsedYears[year]) {
+                    mode = 1;
+                }
+                
+                if (mode === 1) {
+                    // 模式1：XXXX年+XX城市赛区+赛事名+名次+佳辩后缀
+                    const city = internationalCities[Math.floor(Math.random() * internationalCities.length)];
+                    resumeText = `${year}年${city}赛区${tournamentName}${rank}`;
+                } else {
+                    // 模式2：XXXX年+赛事名+正赛+名次+佳辩后缀
+                    resumeText = `${year}年${tournamentName}正赛${rank}`;
+                    // 记录已使用的年份
+                    mode2UsedYears[year] = true;
+                }
+            }
+            
+            // 添加荣誉后缀
+            if (honor) {
+                resumeText += `+${honor}`;
+            }
+            
+            return { 
+                text: resumeText,
+                year: year,
+                hasFull: honor.includes('全程'),
+                hasExcellent: honor === '最佳辩手',
+                rank: rank,
+                mode: mode,
+                honor: honor
+            };
+        }
+        
+        // 加权随机选择函数
+        function weightedRandom(items, weights) {
+            const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+            let random = Math.random() * totalWeight;
+            
+            for (let i = 0; i < items.length; i++) {
+                random -= weights[i];
+                if (random <= 0) {
+                    return items[i];
+                }
+            }
+            
+            return items[items.length - 1];
+        }
+        
+        // 生成履历
+        function generateResume(category, resumeType) {
+            let newResume;
+            
+            if (category === '国际赛') {
+                newResume = generateInternationalResume(resumeType);
+            } else {
+                newResume = generateNormalResume(resumeType);
+            }
+            
+            generatedResumes[category].push(newResume);
+            
+            // 按要求排序
+            sortResumes();
+            
+            // 更新输出
+            updateOutput();
+        }
+        
+        // 排序生成的履历
+        function sortResumes() {
+            // 对每个分类的履历进行排序
+            for (let category in generatedResumes) {
+                generatedResumes[category].sort((a, b) => {
+                    // 国际赛排序规则：年份升序 → "全程最佳辩手" → "最佳辩手" → 名次优先级 → 届数升序
+                    if (category === '国际赛') {
+                        // 年份降序（越新越靠前）
+                        if (a.year !== b.year) {
+                            return b.year - a.year;
+                        }
+                        
+                        // "全程最佳辩手"优先
+                        if (a.hasFull !== b.hasFull) {
+                            return a.hasFull ? -1 : 1;
+                        }
+                        
+                        // "最佳辩手"优先
+                        if (a.hasExcellent !== b.hasExcellent) {
+                            return a.hasExcellent ? -1 : 1;
+                        }
+                        
+                        // 名次优先级：冠军 > 亚军 > 季军
+                        const rankPriority = {'冠军': 0, '亚军': 1, '季军': 2};
+                        if (rankPriority[a.rank] !== rankPriority[b.rank]) {
+                            return rankPriority[a.rank] - rankPriority[b.rank];
+                        }
+                        
+                        return 0;
+                    } else {
+                        // 非国际赛排序规则：年份降序 → "全程" → "佳辩"
+                        // 年份较大的结果排在前面
+                        if (a.year !== b.year) {
+                            return b.year - a.year;
+                        }
+                        
+                        // 包含"全程"的结果排在前面
+                        if (a.hasFull !== b.hasFull) {
+                            return a.hasFull ? -1 : 1;
+                        }
+                        
+                        // 包含"佳辩"的结果排在前面
+                        if (a.hasExcellent !== b.hasExcellent) {
+                            return a.hasExcellent ? -1 : 1;
+                        }
+                        
+                        return 0;
+                    }
+                });
+            }
+        }
+        
+        // 更新输出文本框
+        function updateOutput() {
+            let allResumes = [];
+            
+            // 添加国际赛履历（带标题）
+            if (generatedResumes['国际赛'].length > 0) {
+                allResumes.push('国际赛：');
+                generatedResumes['国际赛'].forEach(resume => {
+                    allResumes.push(`  ${resume.text}`);
+                });
+                allResumes.push(''); // 空行分隔
+            }
+            
+            // 添加无限制级履历（带标题）
+            if (generatedResumes['无限制级'].length > 0) {
+                allResumes.push('非限制级：');
+                generatedResumes['无限制级'].forEach(resume => {
+                    allResumes.push(`  ${resume.text}`);
+                });
+                allResumes.push(''); // 空行分隔
+            }
+            
+            // 添加限制级履历（带标题）
+            if (generatedResumes['限制级'].length > 0) {
+                allResumes.push('限制级：');
+                generatedResumes['限制级'].forEach(resume => {
+                    allResumes.push(`  ${resume.text}`);
+                });
+            }
+            
+            // 将所有履历合并为一个字符串
+            const outputText = allResumes.join('\n');
+            
+            document.getElementById('resumeOutput').value = outputText;
+            
+            // 调整文本框高度
+            adjustTextareaHeight();
+        }
+        
+        // 清空生成记录
+        function clearGeneratedResumes() {
+            generatedResumes = {
+                '无限制级': [],
+                '限制级': [],
+                '国际赛': []
+            };
+            mode2UsedYears = {};
+            newFruitUsedTypes = []; // 清空新果辩已使用类型记录
+            updateOutput();
+        }
+        
+        // 调整文本框高度以适应内容
+        function adjustTextareaHeight() {
+            const textarea = document.getElementById('resumeOutput');
+            textarea.style.height = 'auto'; // 重置高度
+            
+            // 计算合适的高度，考虑内容和最小高度
+            const minHeight = 100; // 最小高度
+            const contentHeight = textarea.scrollHeight;
+            const newHeight = Math.max(minHeight, contentHeight) + 20; // 增加一些额外空间
+            
+            textarea.style.height = `${newHeight}px`;
+        }
+    </script>
+</body>
+</html>
